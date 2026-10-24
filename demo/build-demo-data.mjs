@@ -809,7 +809,24 @@ if (process.argv[1] && process.argv[1].endsWith('build-demo-data.mjs')) {
   mkdirSync(dirname(OUT), { recursive: true });
   const body = '// 由 demo/build-demo-data.mjs 生成——唯一数据源，勿手改（DEV-REQUIREMENTS R5）\nconst DEMO_DATA = ' + JSON.stringify(data, null, 2) + ';\n';
   writeFileSync(OUT, body);
+  /* ② 开发版离线回退：同一份数据，挂到 window 上（public/app.js 在 API 不通时回退到它）。 */
+  const publicDir = join(ROOT, 'public');
+  mkdirSync(publicDir, { recursive: true });
+  writeFileSync(join(publicDir, 'demo-data.js'),
+    '/* 由 demo/build-demo-data.mjs 生成；勿手改，改数据请改生成器后重新运行。 */\n'
+    + `window.DEMO_DATA = ${JSON.stringify(data)};\n`);
+  /* ③ sqlite：schema/00*.sql 全部迁移 + dsh/demo.js 的 seedDemo——与开发版启动同一条播种路径。
+     子进程隔离（本脚本直接 import dsh/demo.js 会与它的 build-demo-data import 成环）。 */
+  const { execFileSync } = await import('node:child_process');
+  const { readdirSync, rmSync } = await import('node:fs');
+  const schemaDir = join(ROOT, 'schema');
+  const sqlitePath = join(ROOT, 'demo', 'demo-data.sqlite');
+  rmSync(sqlitePath, { force: true });
+  execFileSync(process.execPath, ['--disable-warning=ExperimentalWarning', join(ROOT, 'demo', 'seed-demo-sqlite.mjs'), sqlitePath], { stdio: 'inherit' });
+  const executed = readdirSync(schemaDir).filter((f) => f.endsWith('.sql')).sort();
   console.log(`demo-data.js → ${OUT}（profiles=${data.profiles.length}）`);
+  console.log(`public/demo-data.js → ${join(publicDir, 'demo-data.js')}（window.DEMO_DATA）`);
+  console.log(`demo/demo-data.sqlite → ${sqlitePath}（迁移 ${executed.join(' + ')} + seedDemo 播种）`);
 }
 
 export { buildDemoProfiles, finalize };

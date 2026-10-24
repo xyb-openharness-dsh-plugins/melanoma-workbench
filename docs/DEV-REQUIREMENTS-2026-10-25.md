@@ -24,3 +24,19 @@ R1 dsh 七件套 + 真客户端链路（cervical 底本）；R2 schema 冻结（
 
 ## 五、默认值（G1 可改）
 双主体 / 全病程 / MinerU 接入 / 品牌小痣宝 / 样板 cervical+breast / 模型路由 GLM-5.3+Flash。
+
+## 六、宿主接线四要素与 apiBase 定稿契约（M5 继承，逐条可验）
+
+| # | 要素 | 落点 | 怎么验 |
+| --- | --- | --- | --- |
+| H1 | `package.json` 的 `dsh` 块（bundle.patch + client.platform/inject）与 `repository` | `package.json` | `check-pack.mjs` 的 H1 断言 |
+| H2 | `cordis.patch.yml` insert 条目带 `config.root: !!js dshHomePath('melanoma-workbench')` | `cordis.patch.yml` | `check-pack.mjs` 的 H2 断言 |
+| H3 | 真客户端链路 `src/client.js → build-client.mjs → lib/client.js`，占位=0 | `src/` `lib/` | `build-client --check` + tgz 面占位扫描 |
+| H4 | 版本簿记：`VERSION` 唯一来源，`public/` 降级值与测试断言都引用生成物 | `VERSION` `lib/version.js` | `check-version.mjs` 十处同源 |
+
+**apiBase 定稿契约（v0.1.3）**：`API_BASE = 挂载前缀`（独立启动空串，宿主 `/api/<slug>`）；页面统一拼
+`${API_BASE}/api/mel/xxx`。守卫只禁**交界重复** `/(^|/)api$/`，不许 `includes('/api')` 一刀切。
+双形态回归测试见 `test/client.test.mjs`；启动期校验失败渲染错误横幅，**禁止裸 throw 白屏**。
+
+**M5 修复/交付状态（2026-10-25）**：check 全绿；无头 64 页签×2 档案；HVT X1–X4 全过；
+`probe:resp` 8 档宽度 0 问题；一图秀 computed fill=`none`；装机面预检 tgz 占位=0、探针 45/45。
