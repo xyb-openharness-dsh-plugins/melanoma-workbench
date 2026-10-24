@@ -1,0 +1,5 @@
+- insert:
+    - id: melanoma-workbench-main
+      name: "@xyb-community/melanoma-workbench"
+      config:
+        root: !!js dshHomePath('melanoma-workbench')
