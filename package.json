@@ -1,6 +1,6 @@
 {
   "name": "@xyb-community/melanoma-workbench",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "面向皮肤黑色素瘤患者与照护者的本机病程资料、皮损自查与照片对比、分期与前哨淋巴结、BRAF/NRAS 分子、免疫治疗副作用与双轨随访工作台设计项目",
   "private": true,
   "type": "module",
@@ -23,7 +23,11 @@
     "check": "node --check dsh/index.js && node --check lib/client.js && node scripts/check-workbench-package.mjs .",
     "audit": "node scripts/check-conformance.mjs .",
     "release:check": "npm run check && npm run audit",
-    "pack:check": "npm pack --dry-run"
+    "pack:check": "npm pack --dry-run",
+    "demo:data": "node demo/build-demo-data.mjs",
+    "probe:proto": "node scripts/probe-proto.mjs",
+    "probe:resp": "node scripts/probe-responsive.mjs",
+    "probe": "npm run probe:proto && npm run probe:resp"
   },
   "dsh": {
     "bundle": {
