@@ -99,3 +99,15 @@ X2 走查两类都算达标；每条路径末步都有 `.back-row → 回看板`
 - 本原型不读写真实文件、不调用真实 AI、不发送任何内容；所有记录仅内存，刷新重置。
 - 外壳 `lib/client.js` 已监听 `mel:agent-draft` 并把提示词存为草稿（不自动发送）；原生会话的 `ensureSession`
   调起仍需按宿主合同接入，当前骨架未实现——不冒充已完成。
+
+
+## 四、G2 修订后的可复现数字（2026-10-25，评审 P0-3 要求）
+
+| 断言 | 真实值 | 取证命令 |
+| --- | --- | --- |
+| data-step 唯一目标 | **23**（原 21 + 本次补 stage-record / mind-feelings 入链） | `grep -o 'data-step="[^"]*"' prototypes/v0.2/app.js \| sort -u \| wc -l` |
+| 原孤儿页入链 | stage/record **1** 条、mind/feelings **1** 条 → 孤儿 **0** | `grep -c 'data-page="stage" data-sub="record"'`（feelings 同） |
+| 页树计数 | 以**实现**为准：IO 3 页（皮疹/腹泻/肝甲与其他）、随访 4 页（皮肤线/影像线/LDH/隐私过滤说明） | PAGES/SUBPAGES + RENDERERS 词表 |
+| 一图秀 | computed fill=**none**、paths=4、dots=19、nodes=5 | probe-proto 输出 |
+
+> 口径：文档数字与实现不一致时以实现为准并同步本文；严禁留旧数字（评审 P0-3）。
