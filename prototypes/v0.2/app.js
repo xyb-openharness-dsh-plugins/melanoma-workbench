@@ -196,8 +196,13 @@ function aiPromptWithCtx(key) {
       ctx.push(`最近数值：体重 ${w?.v ?? '—'} kg（${w?.d ?? '—'}）、ALT ${a?.v ?? '—'} U/L、TSH ${t?.v ?? '—'} mIU/L（均照抄化验单）`);
     }
     if (key === 'mind') {
-      const f = p.mind.fcr.patient[p.mind.fcr.patient.length - 1];
-      ctx.push(`FCR 自评（本人）：${f?.v ?? '—'}/10（${f?.d ?? '—'}）；照护者另有独立记录`);
+      const shared = (p.mind.fcr?.visibility ?? 'private') === 'shared';
+      if (shared) {
+        const f = p.mind.fcr.patient[p.mind.fcr.patient.length - 1];
+        ctx.push(`FCR 自评（本人）：${f?.v ?? '—'}/10（${f?.d ?? '—'}）；照护者另有独立记录`);
+      } else {
+        ctx.push('FCR 与身体意象记录为私密（visibility=private），已按三出口规则过滤，未带入对话');
+      }
     }
     if (key === 'docs') {
       ctx.push(`待问 ${p.docs.questions.length} 条；材料 ${p.docs.materials.filter((x) => x.state === 'ready').length}/${p.docs.materials.length} 已备`);
@@ -518,7 +523,9 @@ function pageStageSlnb() {
     </div>
   </div>
   <div class="notice" style="margin-top:13px">本页不写「要做 / 不要做」的推荐；是否活检、是否清扫，由治疗团队结合厚度、溃疡、患者情况讨论。</div>
-  <div class="actions" style="margin-top:12px"><button class="soft" data-action="go" data-page="stage" data-sub="pathology" data-step="stage-pathology">回病理与 Breslow →</button></div>`;
+  <div class="actions" style="margin-top:12px"><button class="soft" data-action="go" data-page="stage" data-sub="pathology" data-step="stage-pathology">回病理与 Breslow →</button></div>
+      <div class="actions" style="margin-top:12px"><button class="soft" data-action="go" data-page="stage" data-sub="record" data-step="stage-record">看原始记录 →</button></div>
+    `;
 }
 
 function pageStageRecord() {
@@ -532,10 +539,10 @@ function pageStageRecord() {
   </div>
   <div class="section-title"><div><h2>版本链</h2><p>只列医生记录与病理原文。</p></div></div>
   ${s.stageHistory.map((x) => `<div class="card" style="margin-bottom:10px"><div class="card-head"><div><h3>${esc(x.d)} · ${esc(x.label)}</h3><p>来源：复诊记录原文摘录</p></div>${pill('引用', 'blue')}</div><div class="stage-quote">${esc(x.quote)}</div></div>`).join('')}
-  <div class="notice warn">${esc(s.stageNote)} 本页没有 TNM→分期的推导列，也没有「严重程度」评分。</div>`;
-}
-
-function pageStageMolecular() {
+  <div class="notice warn">${esc(s.stageNote)} 本页没有 TNM→分期的推导列，也没有「严重程度」评分。</div>
+      <div class="actions" style="margin-top:12px"><button class="soft" data-action="go" data-page="stage" data-sub="slnb" data-step="stage-slnb">看前哨淋巴结记录 →</button></div>
+    `;
+}function pageStageMolecular() {
   const p = profile();
   const mols = p.stage.molecular.map((m) => `<div class="mol-card ${m.status === 'not_tested' ? 'notested' : ''}"><div class="mol-head"><b>${esc(m.marker)}</b>${pill(stateLabel(m.status), m.status === 'detected' ? 'orange' : m.status === 'not_detected' ? 'green' : 'dashed')}</div><div class="val">${m.value ? esc(m.value) : '未检测（报告里没有这一项）'}</div><p>${esc(m.explain)}</p><div class="mol-meta">${m.date ? `检测日期 ${esc(m.date)} · 方法 ${esc(m.method)}` : '没有检测日期与报告原文'} · 未检测 ≠ 阴性</div></div>`).join('');
   return `${head('分子三态（BRAF·NRAS·TERT）', '检出 / 未检出 / 未检测三态并列；未检测不等于阴性；不写具体比例。')}
@@ -733,7 +740,9 @@ function pageMindBody() {
   <div class="notice">${esc(m.bodyNote)}</div>
   ${m.bodyImage.map((x) => `<div class="private-row"><b>private · ${esc(x.d)}</b><p>${esc(x.text)}</p></div>`).join('')}
   <div class="notice plain" style="margin-top:12px">本页记录默认不进导出、不进 AI 上下文；需要时由你逐条勾选授权。</div>
-  <div class="actions" style="margin-top:12px"><button class="soft" data-action="go" data-page="mind" data-sub="intimacy" data-step="mind-intimacy">看性与亲密（私密）→</button></div>`;
+  <div class="actions" style="margin-top:12px"><button class="soft" data-action="go" data-page="mind" data-sub="intimacy" data-step="mind-intimacy">看性与亲密（私密）→</button></div>
+      <div class="actions" style="margin-top:12px"><button class="soft" data-action="go" data-page="mind" data-sub="feelings" data-step="mind-feelings">回到 FCR 双人记录 →</button></div>
+    `;
 }
 
 function pageMindIntimacy() {
@@ -800,8 +809,9 @@ function pageDocsTrials() {
 
 /* ---------------- 导出 ---------------- */
 function exportMarkdown(p) {
-  const privateRows = [...p.mind.bodyImage, ...p.mind.intimacy].length;
-  return `# ${p.name} · 复诊摘要（演示导出）\n\n## 事实区（记录与原文）\n- 阶段：${p.stageLine}\n- 自查起点：${p.selfCheck.firstFound.d} ${p.selfCheck.firstFound.site}\n- 病理：${p.stage.subtype} · Breslow ${p.stage.breslow}mm · ${p.stage.ulcer}\n- SLNB：${p.stage.slnb.label}\n- 分子：${p.stage.molecular.map((m) => `${m.marker}=${stateLabel(m.status)}`).join('；')}\n- 双轨下一次：${p.followup.tracks.map((t) => `${t.name} ${t.next}`).join('；')}\n- 最近 IO 轨道：${p.irae.tracks.map((t) => `${t.name} ${t.status}`).join('；')}\n\n## 我的看法与担心\n- FCR 自评：${p.mind.fcr.patient.map((x) => `${x.d} ${x.v}/10`).join('；')}\n- 照护者另有独立记录（不合并、不平均）\n- private 记录 ${privateRows} 条，默认过滤（未包含在本导出）\n\n口径：只导出记录与原文；不含完整本机路径；判断由我与治疗团队做。`;
+  const fcrPrivate = (p.mind.fcr?.visibility ?? 'private') !== 'shared';
+  const privateRows = [...p.mind.bodyImage, ...p.mind.intimacy].length + (fcrPrivate ? 1 : 0);
+  return `# ${p.name} · 复诊摘要（演示导出）\n\n## 事实区（记录与原文）\n- 阶段：${p.stageLine}\n- 自查起点：${p.selfCheck.firstFound.d} ${p.selfCheck.firstFound.site}\n- 病理：${p.stage.subtype} · Breslow ${p.stage.breslow}mm · ${p.stage.ulcer}\n- SLNB：${p.stage.slnb.label}\n- 分子：${p.stage.molecular.map((m) => `${m.marker}=${stateLabel(m.status)}`).join('；')}\n- 双轨下一次：${p.followup.tracks.map((t) => `${t.name} ${t.next}`).join('；')}\n- 最近 IO 轨道：${p.irae.tracks.map((t) => `${t.name} ${t.status}`).join('；')}\n\n## 我的看法与担心\n- FCR 自评：${fcrPrivate ? '（私密，已按 visibility 过滤，未包含在本导出）' : p.mind.fcr.patient.map((x) => `${x.d} ${x.v}/10`).join('；')}\n- 照护者另有独立记录（不合并、不平均）\n- private 记录 ${privateRows} 条，默认过滤（未包含在本导出）\n\n口径：只导出记录与原文；不含完整本机路径；判断由我与治疗团队做。`;
 }
 
 /* ---------------- 渲染分派 ---------------- */

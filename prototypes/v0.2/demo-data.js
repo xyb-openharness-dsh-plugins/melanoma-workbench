@@ -344,7 +344,8 @@ const DEMO_DATA = {
             "变大",
             "颜色不均"
           ],
-          "redlineText": "出现以上情况，建议让皮肤科看；本页只做名词解释，不做任何判断。"
+          "redlineText": "出现以上情况，建议让皮肤科看；本页只做名词解释，不做任何判断。",
+          "subungualNote": "甲下病变另有 ABCDEF 扩展口径（含甲周皮肤受累等）；本卡不展开，复诊时按皮肤科给的口径对照。"
         },
         "abcde": {
           "intro": "ABCDE 是五个观察维度的名词解释，不是自我判断工具，也不能用来排除或确认任何疾病。",
@@ -371,8 +372,13 @@ const DEMO_DATA = {
             },
             {
               "k": "E",
-              "name": "Evolving · 变化",
-              "text": "大小、形状、颜色、症状（痒、痛、出血）是否有变化。"
+              "name": "Elevation · 隆起（中国指南口径）",
+              "text": "病变是否有隆起/变厚。中国指南的 ABCDE 里 E 指 Elevation（隆起）；国际常见版本 E 指 Evolving（演变）。两套口径并列记录，本卡不替你择一，也不据此判断。"
+            },
+            {
+              "k": "E（国际版）",
+              "name": "Evolving · 演变",
+              "text": "大小、形状、颜色、症状（痒、痛、出血）是否有变化。与上一条 Elevation 并列；看医生时把两条都带上。"
             }
           ],
           "note": "ABCDE 只解释名词；是否符合哪几条、意味着什么，由皮肤科医生结合检查说明。本页不出现「符合几条=风险」之类判断。"
@@ -1113,8 +1119,8 @@ const DEMO_DATA = {
       "age": 33,
       "gender": "女",
       "diagnosis": "背部浅表扩散型黑色素瘤 · 扩大切除术后（演示）",
-      "diagnosisShort": "浅表扩散型 · 术后 8 个月",
-      "stageLine": "IB 期（AJCC 第 8 版，医生记录引用；本台不自算、不判定）",
+      "diagnosisShort": "浅表扩散型 IIIB · 术后 8 个月",
+      "stageLine": "IIIB 期（pT2aN1bM0；AJCC 第 8 版，医生记录引用；本台不自算、不判定）",
       "primaryRole": "CAREGIVER",
       "caregiverLabel": "丈夫（照护者 · 代记为主）",
       "hero": {
@@ -1439,8 +1445,13 @@ const DEMO_DATA = {
             },
             {
               "k": "E",
-              "name": "Evolving · 变化",
-              "text": "大小、形状、颜色、症状（痒、痛、出血）是否有变化。"
+              "name": "Elevation · 隆起（中国指南口径）",
+              "text": "病变是否有隆起/变厚。中国指南的 ABCDE 里 E 指 Elevation（隆起）；国际常见版本 E 指 Evolving（演变）。两套口径并列记录，本卡不替你择一，也不据此判断。"
+            },
+            {
+              "k": "E（国际版）",
+              "name": "Evolving · 演变",
+              "text": "大小、形状、颜色、症状（痒、痛、出血）是否有变化。与上一条 Elevation 并列；看医生时把两条都带上。"
             }
           ],
           "note": "ABCDE 只解释名词；是否符合哪几条、意味着什么，由皮肤科医生结合检查说明。本页不出现「符合几条=风险」之类判断。"
