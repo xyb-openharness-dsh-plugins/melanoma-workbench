@@ -1147,6 +1147,21 @@ function applyHash() {
   state.page = page;
   state.sub[page] = sub || (SUBPAGES[page] ? SUBPAGES[page][0][0] : '');
 }
+/* 打印展开：@media print 的 CSS 无法让 <details> 收起内容进入 printToPDF（ENDO 评审 P0-2 实测）——
+   beforeprint 时设 open，打印后恢复（32 号模版 2026-10-25 修正）。 */
+(function printExpandFoldouts() {
+  let prior = null;
+  window.addEventListener('beforeprint', () => {
+    const folds = [...document.querySelectorAll('details.phase-fold')];
+    prior = folds.map((d) => d.open);
+    folds.forEach((d) => { d.open = true; });
+  });
+  window.addEventListener('afterprint', () => {
+    if (!prior) return;
+    document.querySelectorAll('details.phase-fold').forEach((d, i) => { d.open = Boolean(prior[i]); });
+    prior = null;
+  });
+})();
 window.addEventListener('hashchange', () => { applyHash(); render(); });
 
 applyHash();
