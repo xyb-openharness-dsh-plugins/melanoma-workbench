@@ -510,6 +510,29 @@ body.large .pill{font-size:12px}
 body.large .mface .name,body.large .ccard .name{font-size:13.5px}
 
 /* ---------- 响应式（RESPONSIVE-RULES 六条硬规则；断点只有 1180/900/600） ---------- */
+
+/* ---------- 治疗路径折叠卡（TREATMENT-PATHWAY-FOLDOUT 模版） ---------- */
+.fold-line{display:grid;gap:10px;min-width:0}
+.phase-fold{background:#fff;border:1px solid var(--line);border-radius:13px;padding:0;min-width:0;overflow:hidden}
+.phase-fold summary{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:12px 14px;cursor:pointer;list-style:none;min-width:0}
+.phase-fold summary::-webkit-details-marker{display:none}
+.phase-fold summary::after{content:'▸';margin-left:auto;color:#a9b5c1;font-size:11px}
+.phase-fold[open] summary::after{content:'▾'}
+.phase-fold summary .tl-dot{width:9px;height:9px;border-radius:50%;background:var(--brand);flex:0 0 auto;align-self:center}
+.phase-fold .ph-name{font-size:12.5px;white-space:nowrap}
+.phase-fold .ph-date{font-size:10.5px;color:var(--muted);white-space:nowrap}
+.phase-fold .ph-brief{font-size:11.5px;color:var(--ink-2);flex:1;min-width:180px}
+.phase-fold .ph-hint{font-size:10px;color:var(--muted);white-space:nowrap}
+.phase-fold[open] .ph-hint{display:none}
+.phase-detail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:2px 14px 14px;border-top:1px dashed var(--line);min-width:0}
+.pd-block{min-width:0;background:#fbfdfe;border:1px solid #eef3f7;border-radius:10px;padding:10px 12px}
+.pd-block h4{font-size:11.5px;margin-bottom:5px;color:var(--brand-deep)}
+.pd-summary{font-size:11.5px;line-height:1.6;margin-bottom:6px}
+.pd-row{display:grid;grid-template-columns:5.5em minmax(0,1fr);gap:8px;font-size:11px;line-height:1.6;padding-top:4px;border-top:1px dotted #e8eff5}
+.pd-row em{color:var(--muted);font-style:normal;white-space:nowrap}
+@media(max-width:900px){.phase-detail{grid-template-columns:minmax(0,1fr)}}
+@media print{.phase-fold .phase-detail{display:grid!important}.phase-fold summary::after{display:none}.phase-fold .ph-hint{display:none}.phase-fold{break-inside:avoid}}
+
 @media(max-width:1180px){
   .topbar{flex-wrap:wrap;gap:8px 14px}
   /* 三块"最近变化"降到 2 列，按钮独占一行：3 列在此宽度下每块只剩 200px 出头 */

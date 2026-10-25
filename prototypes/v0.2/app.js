@@ -556,8 +556,27 @@ function pageStageRecord() {
 function pageTreatPathway() {
   const p = profile();
   const t = p.treatment;
-  return `${head('治疗路径与方案', '辅助 vs 晚期、计划 vs 实际、换线原因；只记录不推荐。')}
-  <div class="detour-line">${t.pathway.map((x, i) => `<div class="detour-card ${i === t.pathway.length - 1 ? 'end' : ''}"><span class="tl-dot"></span><div class="detour-body"><div class="det-head"><b>${esc(x.phase)}</b><span class="place">${esc(x.d)}</span></div><p style="font-size:11.5px">${esc(x.text)}</p></div></div>`).join('')}</div>
+  /* 阶段折叠卡（TREATMENT-PATHWAY-FOLDOUT 模版）：默认只显「阶段 · 日期 · 一句话概要」；
+     医生/家属按需展开五块细节——方案 / 指标和趋势 / 影像发现 / 副作用总结 / 心理与营养措施及效果。
+     原生 <details>：零 JS、打印时展开（见 style.css @media print）。 */
+  const fold = (x) => `<details class="phase-fold">
+      <summary>
+        <span class="tl-dot"></span>
+        <b class="ph-name">${esc(x.phase)}</b>
+        <span class="ph-date">${esc(x.d)}</span>
+        <span class="ph-brief">${esc(x.text)}</span>
+        <span class="ph-hint">展开细节</span>
+      </summary>
+      <div class="phase-detail">
+        ${[['方案', x.detail?.regimen], ['指标和趋势', x.detail?.metrics], ['影像发现', x.detail?.imaging], ['副作用总结', x.detail?.ae], ['心理与营养措施及效果', x.detail?.support]]
+          .map(([title, blk]) => blk ? `<section class="pd-block"><h4>${title}</h4>
+            <p class="pd-summary">${esc(blk.summary || '')}</p>
+            ${(blk.items || []).map(([k, v]) => `<div class="pd-row"><em>${esc(k)}</em><span>${esc(v)}</span></div>`).join('')}
+          </section>` : '').join('')}
+      </div>
+    </details>`;
+  return `${head('治疗路径与方案', '按阶段折叠：默认概要，点开看方案 / 指标 / 影像 / 副作用 / 支持措施；只记录不推荐。')}
+  <div class="fold-line">${t.pathway.map(fold).join('')}</div>
   <div class="section-title"><div><h2>计划 vs 实际</h2><p>日期差只并列，不做依从性评判。</p></div></div>
   <div class="table-wrap"><table><thead><tr><th>项目</th><th>计划（医生原文）</th><th>实际（记录）</th></tr></thead><tbody>${t.planVsActual.map((x) => `<tr><td><b>${esc(x.item)}</b></td><td>${esc(x.plan)}</td><td>${esc(x.actual)}</td></tr>`).join('')}</tbody></table></div><div class="scroll-hint">左右滑动查看表格</div>
   <p class="small-note" style="margin-top:8px">${esc(t.pathwayNote)}</p>
