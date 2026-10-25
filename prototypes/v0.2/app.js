@@ -855,7 +855,8 @@ function subnav(page) {
 function renderNav() {
   $('#nav').innerHTML = PAGES.map(([k, label, ic]) => `<button class="nav-button" data-action="go" data-page="${k}" aria-current="${state.page === k ? 'page' : 'false'}">${icon(ic)}<span>${esc(label)}</span></button>`).join('');
 }
-function render() {
+function render(opts) {
+  const keepScroll = Boolean(opts && opts.keepScroll);
   const p = profile();
   $('#profile-name').textContent = `${p.name.replace('（演示）', '')}的资料`;
   $('#profile-meta').textContent = `${p.age} 岁 · ${p.diagnosisShort}`;
@@ -867,7 +868,7 @@ function render() {
   renderNav();
   setAgent(state.agent.open);
   document.body.setAttribute('data-booted', '1');
-  window.scrollTo(0, 0);
+  if (!keepScroll) window.scrollTo(0, 0);
 }
 
 /* ---------------- AI 面板 ---------------- */
@@ -1162,7 +1163,14 @@ function applyHash() {
     prior = null;
   });
 })();
-window.addEventListener('hashchange', () => { applyHash(); render(); });
+/* 36 号疾病概要用 pushState 打开、history.back() 收起，会顺带把 hash 改成 #disease-primer 再改回来。
+   这类 hash 变化不改变本台路由，收起后不该因为重渲染再跳回页首（那会冲掉 primer 恢复的滚动位置）。 */
+window.addEventListener('hashchange', () => {
+  const pageBefore = state.page;
+  const subBefore = state.sub[state.page];
+  applyHash();
+  render({ keepScroll: pageBefore === state.page && subBefore === state.sub[state.page] });
+});
 
 applyHash();
 render();
