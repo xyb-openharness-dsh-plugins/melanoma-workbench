@@ -1,6 +1,6 @@
 {
   "name": "@xyb-community/melanoma-workbench",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "面向皮肤黑色素瘤患者与照护者的本机病程资料、皮损自查与照片对比、分期与前哨淋巴结、BRAF/NRAS 分子、免疫治疗副作用与双轨随访工作台设计项目",
   "private": true,
   "type": "module",
