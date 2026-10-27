@@ -80,7 +80,7 @@ const points = payload.profiles.reduce((a, p) => a
 
 console.log(`✓ 小痣宝 MolePal ${displayVersion}（build ${buildStamp}）`)
 console.log(`  资料目录：${workspace}`)
-console.log(`  档案：${subjects.map((s) => `${s.id}=${s.name}`).join(' / ')} · 指标点 ${points} 条 · 试验线索 ${payload.profiles.reduce((a, p) => a + p.trials.length, 0)} 条`)
+console.log(`  档案：${subjects.map((s) => `${s.id}=${s.name}`).join(' / ')} · 指标点 ${points} 条 · 试验线索 ${payload.profiles.reduce((a, p) => a + (p.trials || []).length, 0)} 条`)
 console.log(`  本机访问：${url}`)
 
 if (args.open) {

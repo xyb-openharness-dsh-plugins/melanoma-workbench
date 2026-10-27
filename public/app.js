@@ -21,7 +21,7 @@
    → 外壳 client 填入原生会话草稿；不自动发送。 */
 
 const APP_INFO = {
-  version: '0.3.3',
+  version: '0.3.4',
   build: '2026-10-24',
   channel: 'dsh',
   channelLabel: '开发版 · 已连接工作台数据',
@@ -1336,7 +1336,14 @@ function applyHash() {
     prior = null;
   });
 })();
-window.addEventListener('hashchange', () => { applyHash(); render(); });
+/* 36 号疾病概要用 pushState 打开、history.back() 收起，会顺带把 hash 改成 #disease-primer 再改回来。
+   这类 hash 变化不改变本台路由，收起后不该因为重渲染再跳回页首（那会冲掉 primer 恢复的滚动位置）。 */
+window.addEventListener('hashchange', () => {
+  const pageBefore = state.page;
+  const subBefore = state.sub[state.page];
+  applyHash();
+  render({ keepScroll: pageBefore === state.page && subBefore === state.sub[state.page] });
+});
 
 async function boot() {
   const { reachable, data } = await loadBootstrap();

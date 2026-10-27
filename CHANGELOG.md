@@ -2,6 +2,18 @@
 
 只增不删；每条写清"改了什么 + 为什么 + 用户可见结果"。版本号与 VERSION、package.json 三处必须一致。
 
+## 0.3.4 — 2026-10-27（开发版补上疾病概要：用户装到的版本也有「?」）
+
+- 缺口：0.3.3 只把 primer 三件套放在 `prototypes/`，`public/` 没有引用 → 本机原型能用、装机后没有这个功能。
+- 新增 `scripts/sync-public.mjs`：把 `primer.js` / `primer.css` / `primer-data.js` 从原型整文件复制到
+  `public/`（其它两件是定点替换副本，由 ui-parity 逐字符兜住，不整文件覆盖）；`--check` 模式校验
+  字节一致 + `index.html` 引用 + 加载顺序，并接进 `npm run check`。
+- `public/index.html` 引入三个 primer 资源（样式在 shell.css 之后；数据先于模块、模块先于 app.js）。
+- `public/app.js` 补 `hashchange → render({keepScroll})`，否则关闭概要时重渲染把滚动位置冲回页首。
+- 顺手修 `scripts/dev-server.mjs` 启动摘要对 `p.trials` 取值崩溃（空工作台必崩，`npm start` 起不来）。
+- 验证：dev UI（`/api/mel/ui/index.html`，真实 DSH server）probe 9/9；原型 9/9；`npm run check` 退出 0。
+- 未完成：装机 tgz 安装与真机抽查（需宿主）。
+
 ## 0.3.3 — 2026-10-27（36 号 v2 补齐：指南可点 + 状态卡）
 
 - 模式层：`prototypes/v0.2/primer.js` / `primer.css` 覆盖为 starter 2026-10-27 版。

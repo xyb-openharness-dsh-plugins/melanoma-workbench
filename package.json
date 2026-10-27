@@ -1,6 +1,6 @@
 {
   "name": "@xyb-community/melanoma-workbench",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "面向皮肤黑色素瘤患者与照护者的本机病程资料、皮损自查与照片对比、分期与前哨淋巴结、BRAF/NRAS 分子、免疫治疗副作用与双轨随访工作台设计项目",
   "private": true,
   "type": "module",
@@ -25,7 +25,7 @@
     "NOTICE.md"
   ],
   "scripts": {
-    "check": "MEL_CHANNEL=beta node scripts/build-version.mjs && node --disable-warning=ExperimentalWarning demo/build-demo-data.mjs && node scripts/build-client.mjs --check && node scripts/check-version.mjs && node scripts/check-syntax.mjs && node scripts/check-schema.mjs && node scripts/check-wording.mjs && node scripts/check-demo-columns.mjs && node --disable-warning=ExperimentalWarning --test test/*.test.mjs && node scripts/check-workbench-package.mjs . && node scripts/check-conformance.mjs . && node scripts/check-primer-links.mjs",
+    "check": "MEL_CHANNEL=beta node scripts/build-version.mjs && node --disable-warning=ExperimentalWarning demo/build-demo-data.mjs && node scripts/build-client.mjs --check && node scripts/sync-public.mjs --check && node scripts/check-version.mjs && node scripts/check-syntax.mjs && node scripts/check-schema.mjs && node scripts/check-wording.mjs && node scripts/check-demo-columns.mjs && node --disable-warning=ExperimentalWarning --test test/*.test.mjs && node scripts/check-workbench-package.mjs . && node scripts/check-conformance.mjs . && node scripts/check-primer-links.mjs",
     "audit": "node scripts/check-conformance.mjs .",
     "build:version": "MEL_CHANNEL=beta node scripts/build-version.mjs",
     "check:version": "node scripts/check-version.mjs",
@@ -48,7 +48,8 @@
     "test": "node --disable-warning=ExperimentalWarning --test test/*.test.mjs",
     "start": "node --disable-warning=ExperimentalWarning scripts/dev-server.mjs",
     "dev": "node --disable-warning=ExperimentalWarning scripts/dev-server.mjs",
-    "probe:primer": "node scripts/probe-disease-primer.mjs"
+    "probe:primer": "node scripts/probe-disease-primer.mjs",
+    "sync:public": "node scripts/sync-public.mjs"
   },
   "dsh": {
     "bundle": {
