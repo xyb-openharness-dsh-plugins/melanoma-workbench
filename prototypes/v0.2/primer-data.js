@@ -2,12 +2,15 @@
  * 只写解释层：定义、文件、指南列出的手段、已经发生的版本与登记事实。
  * 规范：docs/36-DISEASE-PRIMER.md；本项目实例清单：docs/DISEASE-PRIMER.md
  * 数据契约：window.DISEASE_PRIMER = { brand, name, en, updated, sections[] }
+ *
+ * 2026-10-27 §2.5：sources 的 original:true 带 url、original:false 带 secondaryUrl；
+ * evidence 表「原件」列改为 { text, url } 对象。所有链接均经真浏览器验活（见 CHANGELOG 0.3.3）。
  */
 window.DISEASE_PRIMER = {
   brand: '小痣宝 MolePal',
   name: '皮肤黑色素瘤',
   en: 'Cutaneous Melanoma',
-  updated: '2026-10-25',
+  updated: '2026-10-27',
   sections: [
     {
       id: 'definition',
@@ -20,12 +23,12 @@ window.DISEASE_PRIMER = {
         '直径阈值不是诊断线：中国指南写「＞5～6 mm 或明显长大时要注意」，并建议直径＞1 cm 的色素痣做活检评估；NCCN/ACS 写「大于 6 mm，但有些黑色素瘤更小」。',
         'Breslow 厚度与溃疡是 AJCC 第 8 版 T 分期的输入变量：厚度按毫米记录，溃疡记「有 / 无」，两者一起进 T 分期（T1 按厚度与溃疡分成 T1a / T1b）。它们是分期的原料，不是「严重程度评分」，也不能脱离 N 与 M 单独读成早期或晚期。',
         '肢端与甲下是中文语境里的自查重点：足底、趾缝、甲下、手掌按序看，不是只照镜子看背部。',
-        '本台不判断一颗痣是良性还是恶性。形态变化只做记录与时间轴，判读归皮肤科。'
+        '本台不判断一颗痣的良恶性质，判读归皮肤科。形态变化只做记录与时间轴。'
       ],
       sources: [
-        { org: '国家卫生健康委员会', doc: '黑色素瘤诊疗指南（2022 年版），24 页', version: '2022-04 发布', original: true, page: 'P2–P3、P5–P6' },
-        { org: 'NCCN', doc: 'NCCN Guidelines for Patients: Melanoma 2026', version: '基于 V1.2026（2026-02-17）', original: true, page: 'P6、P14' },
-        { org: 'AJCC', doc: 'AJCC Cancer Staging Manual', version: '第 8 版（出版年份未核实）', original: false, page: '页码待核' }
+        { org: '国家卫生健康委员会', doc: '黑色素瘤诊疗指南（2022 年版），24 页', version: '2022-04 发布', original: true, url: 'https://www.nhc.gov.cn/yzygj/c100068/202204/0c1f7d3aca0545abbeb02030ce255930.shtml', page: 'P2–P3、P5–P6', note: '卫健委通知页，附件 15 为该指南 PDF' },
+        { org: 'NCCN', doc: 'NCCN Guidelines for Patients: Melanoma 2026', version: '基于 V1.2026（2026-02-17）', original: true, url: 'https://www.nccn.org/patientresources/patient-resources/guidelines-for-patients/guidelines-for-patients-details?patientGuidelineId=21', page: 'P6、P14' },
+        { org: 'AJCC', doc: 'AJCC Cancer Staging Manual', version: '第 8 版（出版年份未核实）', original: false, secondaryUrl: 'https://store.facs.org/ajcc-8th-edition-cancer-staging-manual', page: '页码待核', note: 'ACS 官方书目页，非正文；正文需购买' }
       ]
     },
     {
@@ -35,12 +38,12 @@ window.DISEASE_PRIMER = {
       table: {
         head: ['机构', '文件', '版本 / 日期', '原件', '本台的用途'],
         rows: [
-          ['国家卫生健康委员会', '黑色素瘤诊疗指南（2022 年版），24 页', '2022-04 发布', '已取得（PDF）', '中国口径的分期、SLNB 适应证、BRAF/CKIT/NRAS 检测、国内上市靶向药清单'],
-          ['NCCN', 'NCCN Guidelines: Melanoma: Cutaneous', 'V3.2026（官网页面显示）', '未取得（全文需授权，仅元信息）', '辅助与晚期治疗的分层结构'],
-          ['NCCN', 'NCCN Guidelines for Patients: Melanoma 2026', '基于 V1.2026，2026-02-17', '已取得（PDF）', '患者版表述、SLNB 阈值、随访间隔、irAE 清单'],
-          ['CSCO', 'CSCO 黑色素瘤诊疗指南', '2025 版（据学会入口）', '未取得（全文需购买）', '仅记存在，本台未引用其条文与页码'],
-          ['ASCO', 'Management of irAEs in Patients Treated With Immune Checkpoint Inhibitor Therapy', '2021 版', '未取得（据二次来源）', 'irAE 的器官谱与管理原则'],
-          ['AJCC', 'AJCC Cancer Staging Manual', '第 8 版（出版年份未核实）', '未取得', '分期字段口径']
+          ['国家卫生健康委员会', '黑色素瘤诊疗指南（2022 年版），24 页', '2022-04 发布', { text: '已取得（PDF）', url: 'https://www.nhc.gov.cn/yzygj/c100068/202204/0c1f7d3aca0545abbeb02030ce255930.shtml' }, '中国口径的分期、SLNB 适应证、BRAF/CKIT/NRAS 检测、国内上市靶向药清单'],
+          ['NCCN', 'NCCN Guidelines: Melanoma: Cutaneous', 'V3.2026（官网页面显示）', { text: '未取得（全文需授权，仅元信息）', url: 'https://www.nccn.org/guidelines/guidelines-detail?category=1&id=1492' }, '辅助与晚期治疗的分层结构'],
+          ['NCCN', 'NCCN Guidelines for Patients: Melanoma 2026', '基于 V1.2026，2026-02-17', { text: '已取得（PDF）', url: 'https://www.nccn.org/patientresources/patient-resources/guidelines-for-patients/guidelines-for-patients-details?patientGuidelineId=21' }, '患者版表述、SLNB 阈值、随访间隔、irAE 清单'],
+          ['CSCO', 'CSCO 黑色素瘤诊疗指南', '2025 版（据学会入口）', { text: '未取得（全文需购买）', url: 'https://www.pmphmall.com/gdsdetail/656262-335860' }, '仅记存在，本台未引用其条文与页码'],
+          ['ASCO', 'Management of irAEs in Patients Treated With Immune Checkpoint Inhibitor Therapy', '2021 版', { text: '未取得（据二次来源）', url: 'https://scholarlyworks.corewellhealth.org/hematology_oncology_articles/63/' }, 'irAE 的器官谱与管理原则'],
+          ['AJCC', 'AJCC Cancer Staging Manual', '第 8 版（出版年份未核实）', { text: '未取得（书店书目页）', url: 'https://store.facs.org/ajcc-8th-edition-cancer-staging-manual' }, '分期字段口径']
         ]
       },
       points: [
@@ -49,9 +52,9 @@ window.DISEASE_PRIMER = {
         'CSCO 2025 全文未取得，凡涉及「中国最新推荐」的条目一律停在「待核验」，不写成「中国指南要求」。'
       ],
       sources: [
-        { org: '国家卫生健康委员会', doc: '黑色素瘤诊疗指南（2022 年版）', version: '2022-04', original: true, page: 'P2–P3、P10、P12–P15' },
-        { org: 'NCCN', doc: 'NCCN Guidelines: Melanoma: Cutaneous', version: 'V3.2026', original: false, page: '页码待核', note: '仅官网元信息，全文需授权' },
-        { org: 'CSCO', doc: '中国临床肿瘤学会指南订购入口', version: '2025 版', original: false, page: '页码待核', note: '全文需购买，未取得' }
+        { org: '国家卫生健康委员会', doc: '黑色素瘤诊疗指南（2022 年版）', version: '2022-04', original: true, url: 'https://www.nhc.gov.cn/yzygj/c100068/202204/0c1f7d3aca0545abbeb02030ce255930.shtml', page: 'P2–P3、P10、P12–P15', note: '卫健委通知页，附件 15 为该指南' },
+        { org: 'NCCN', doc: 'NCCN Guidelines: Melanoma: Cutaneous', version: 'V3.2026', original: false, secondaryUrl: 'https://www.nccn.org/guidelines/guidelines-detail?category=1&id=1492', page: '页码待核', note: '仅官网元信息，全文需授权' },
+        { org: 'CSCO', doc: '中国临床肿瘤学会（CSCO）黑色素瘤诊疗指南 2025', version: '2025 版', original: false, secondaryUrl: 'https://www.pmphmall.com/gdsdetail/656262-335860', page: '页码待核', note: '全文需购买，未取得；链接为人卫商城该书目页' }
       ]
     },
     {
@@ -96,9 +99,9 @@ window.DISEASE_PRIMER = {
         '以上是文献与指南里列出的手段，按病期与线序排列，不代表任何一项适合你。选哪一个，这一句需要问你的医生。'
       ],
       sources: [
-        { org: '国家卫生健康委员会', doc: '黑色素瘤诊疗指南（2022 年版）', version: '2022-04', original: true, page: 'P5–P6、P12–P15' },
-        { org: 'NCCN', doc: 'NCCN Guidelines for Patients: Melanoma 2026', version: '基于 V1.2026', original: true, page: 'P20–P21、P42–P57' },
-        { org: '中国医药信息查询平台', doc: '达拉菲尼 / 曲美替尼 / 维莫非尼 / 帕博利珠单抗 / 特瑞普利单抗 / 伊匹木单抗 / 纳武利尤单抗说明书', version: '访问 2026-10-24', original: false, page: '页码待核', note: '说明书级核验，批准日期与批件号未核实' }
+        { org: '国家卫生健康委员会', doc: '黑色素瘤诊疗指南（2022 年版）', version: '2022-04', original: true, url: 'https://www.nhc.gov.cn/yzygj/c100068/202204/0c1f7d3aca0545abbeb02030ce255930.shtml', page: 'P5–P6、P12–P15', note: '卫健委通知页，附件 15 为该指南' },
+        { org: 'NCCN', doc: 'NCCN Guidelines for Patients: Melanoma 2026', version: '基于 V1.2026', original: true, url: 'https://www.nccn.org/patientresources/patient-resources/guidelines-for-patients/guidelines-for-patients-details?patientGuidelineId=21', page: 'P20–P21、P42–P57' },
+        { org: '中国医药信息查询平台', doc: '达拉菲尼 / 曲美替尼 / 维莫非尼 / 帕博利珠单抗 / 特瑞普利单抗 / 伊匹木单抗 / 纳武利尤单抗说明书', version: '访问 2026-10-24', original: false, secondaryUrl: 'https://www.dayi.org.cn/drug/1158226.html', page: '页码待核', note: '链接为曲美替尼片条目；其余各药在同平台可检索。说明书级核验，批准日期与批件号未核实' }
       ]
     },
     {
@@ -113,10 +116,11 @@ window.DISEASE_PRIMER = {
         '指南结构：卫健委 2022 版没有随访章节；CSCO 2025 全文未取得，因此本台随访间隔数字来自 NCCN 患者版与 AIM，不是中国指南原文。'
       ],
       sources: [
-        { org: 'NCCN', doc: 'NCCN Guidelines: Melanoma: Cutaneous / for Patients', version: 'V3.2026 / 2026-02-17', original: false, page: '页码待核', note: '临床版仅元信息，患者版 PDF 已取得' },
-        { org: '中国医药信息查询平台', doc: '曲美替尼片说明书、纳武利尤单抗说明书', version: '访问 2026-10-24', original: false, page: '页码待核', note: '批准日期与批件号未核实' },
-        { org: '本项目登记快照', doc: 'research/melanoma-cancer/manifest.json（unified-trial-mcp）', version: '2026-10-25', original: true, page: '不适用', note: '294 条去重，阶段字段未采集' },
-        { org: '国家卫生健康委员会', doc: '黑色素瘤诊疗指南（2022 年版）', version: '2022-04', original: true, page: '目录（无随访章节）' }
+        { org: 'NCCN', doc: 'NCCN Guidelines: Melanoma: Cutaneous / for Patients', version: 'V3.2026 / 2026-02-17', original: false, secondaryUrl: 'https://www.nccn.org/patientresources/patient-resources/guidelines-for-patients/guidelines-for-patients-details?patientGuidelineId=21', page: '页码待核', note: '临床版仅元信息，患者版 PDF 已取得；链接为患者版详情页' },
+        { org: '中国医药信息查询平台', doc: '曲美替尼片说明书', version: '访问 2026-10-24', original: false, secondaryUrl: 'https://www.dayi.org.cn/drug/1158226.html', page: '页码待核', note: '批准日期与批件号未核实' },
+        { org: '中国医药信息查询平台', doc: '纳武利尤单抗说明书', version: '访问 2026-10-24', original: false, secondaryUrl: 'https://www.dayi.org.cn/drug/1157237.html', page: '页码待核', note: '所见适应症列表未含黑色素瘤' },
+        { org: '本项目登记快照', doc: 'research/melanoma-cancer/manifest.json（unified-trial-mcp）', version: '2026-10-25', original: true, nolink: true, page: '不适用', note: '本机快照，无公开 URL；第三方原件未存档' },
+        { org: '国家卫生健康委员会', doc: '黑色素瘤诊疗指南（2022 年版）', version: '2022-04', original: true, url: 'https://www.nhc.gov.cn/yzygj/c100068/202204/0c1f7d3aca0545abbeb02030ce255930.shtml', page: '目录（无随访章节）', note: '卫健委通知页，附件 15 为该指南' }
       ]
     }
   ]

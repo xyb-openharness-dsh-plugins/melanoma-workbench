@@ -378,6 +378,54 @@ function metricCard(code) {
 }
 
 /* ---------------- 看板 ---------------- */
+/* 36 号 §2.6 · 看板首卡状态卡四件：eyebrow / 派生天数 / 现状行 / 出口按钮排。
+   天数一律由锚点日（手术日 = Day 0）与演示「今天」计算，不手填；无锚点显示待初始化。 */
+function isoDay(s) {
+  const m = String(s || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? Date.UTC(+m[1], +m[2] - 1, +m[3]) : null;
+}
+function dayDiff(from, to) {
+  const a = isoDay(from), b = isoDay(to);
+  return a === null || b === null ? null : Math.round((b - a) / 86400000);
+}
+function primerButton() {
+  /* 不用 data-primer-open：那个属性由 primer.js 接管，顶栏「?」会因此不被自动挂载（36 号 §3.2）。
+     也不新增 data-action（开发版 public/app.js 没有该模块）；用独立属性 + 本文件自己的委托监听。
+     模块未接入（开发版当前状态）时不渲染，避免留一个点了没反应的按钮。 */
+  if (typeof window === 'undefined' || !window.DiseasePrimer) return '';
+  return '<button class="soft" data-primer-cta aria-haspopup="dialog" aria-controls="disease-primer">疾病概要：皮肤黑色素瘤是什么？</button>';
+}
+function statusCard(p) {
+  const meta = (typeof DEMO_DATA !== 'undefined' && DEMO_DATA.meta) || {};
+  const surgery = ((p.treatment && p.treatment.surgeries) || [])[0] || null;
+  const anchor = surgery ? surgery.d : '';
+  const days = dayDiff(anchor, meta.today || '');
+  const nodes = ((p.followup && p.followup.tracks) || []).map((t) => ({
+    label: String(t.name || '').replace(/^[A-Z] 轨 · /, ''),
+    d: (String(t.next || '').match(/\d{4}-\d{2}-\d{2}/) || [''])[0]
+  })).filter((x) => x.d).sort((a, b) => a.d.localeCompare(b.d));
+  const nextNode = nodes[0] || null;
+  const systemic = (p.treatment && p.treatment.systemic) || null;
+  const done = systemic && Array.isArray(systemic.cycles) ? systemic.cycles.filter((c) => c.status === '已完成').length : 0;
+  const planLine = ((p.treatment && p.treatment.planVsActual) || []).find((x) => /辅助免疫/.test(String(x.item || '')));
+  const nextVisit = planLine ? (String(planLine.actual || '').match(/下次\s*(\d{4}-\d{2}-\d{2})/) || ['', ''])[1] : '';
+
+  if (days === null) {
+    return `<div class="stage-strip" data-status-card="uninitialized"><span class="eyebrow">D+N 状态卡</span>`
+      + `<span class="stage-now"><b>待初始化</b><small>未找到锚点日（手术日 / Day 0），天数不由本台手填。先去「分期与分子」补手术日期与病理原文；本台暂无独立三步向导。</small></span>`
+      + `<div class="actions"><button class="primary" data-action="go" data-page="stage" data-sub="pathology">去补手术日期 →</button>${primerButton()}</div>`
+      + `</div>`;
+  }
+  const nextDate = nextVisit || (nextNode ? nextNode.d : '');
+  const nextItem = nextVisit ? '系统治疗预约' : (nextNode ? nextNode.label + '复查' : '');
+  const nextTxt = nextDate ? `下次：${nextDate}（${nextItem}）` : '下次：待预约';
+  const stateText = systemic ? `${systemic.kind === 'IO 辅助' ? '辅助免疫治疗' : (systemic.kind || '系统治疗')}进行中 · 已完成 ${done} 次` : '治疗后随访';
+  return `<div class="stage-strip" data-status-card="ready"><span class="eyebrow">D+${days} 状态卡 · 距${nextNode ? nextNode.label + '复查' : '下一阶段'}</span>`
+    + `<span class="stage-day"><b>第 ${days} 天</b><small>锚点 ${esc(anchor)} ${esc(surgery ? surgery.title : '')}（Day 0）</small></span>`
+    + `<span class="stage-now"><b>${esc(p.stageLine || '阶段待补')}</b><small>${esc(stateText)} · ${esc(nextTxt)} · 只引用医生与病理原文</small></span>`
+    + `<div class="actions"><button class="primary" data-action="go" data-page="treatment" data-sub="systemic">看系统治疗周期 →</button>${primerButton()}</div>`
+    + `</div>`;
+}
 function pageDash() {
   const p = profile();
   const tasks = [
@@ -399,7 +447,7 @@ function pageDash() {
   const chips = SCENES.map(([id, label]) => `<button class="scene-chip" data-action="scene" data-scene="${id}">${id} ${esc(label)}</button>`).join('');
   const metricCards = state.sel[state.profileId].map(metricCard).join('');
   return `${head('看板', '把今天能做的一件事放在最前面；自查、双轨随访与 IO 反应都从这里出发。')}
-  <div class="stage-strip"><span class="eyebrow">当前阶段</span><b>${esc(p.stageLine)}</b><small>只引用医生与病理原文 · 本台不自算</small></div>
+  ${statusCard(p)}
   <div class="duo">
     <div class="duo-col"><span class="duo-tag"><i></i>本人入口 · ${esc(p.name)}</span><div class="task-grid">${patientTasks}</div></div>
     <div class="duo-col care"><span class="duo-tag"><i></i>${esc(p.caregiverLabel)} · 代记入口</span><div class="task-grid">${careTasks}</div></div>
@@ -1032,8 +1080,7 @@ const FORM_IDS = {
 
 /* ---------------- ACTIONS ---------------- */
 const ACTIONS = {
-  go(el) { navigate(el.dataset.page, el.dataset.sub || ''); },
-  sub(el) { navigate(state.page, el.dataset.sub); },
+  go(el) { navigate(el.dataset.page, el.dataset.sub || ''); },  sub(el) { navigate(state.page, el.dataset.sub); },
   scene(el) { const s = SCENES.find((x) => x[0] === el.dataset.scene); if (s) navigate(s[2], s[3]); },
   range(el) { state.range = el.dataset.range; render(); },
   toggle(el) { state.toggles[el.dataset.key] = !state.toggles[el.dataset.key]; render(); },
@@ -1105,6 +1152,13 @@ document.addEventListener('click', (e) => {
   if (!fn) return;
   e.preventDefault();
   fn(el);
+});
+/* 36 号 §2.6 出口：状态卡副按钮打开疾病概要（与顶栏「?」同一个整页面板） */
+document.addEventListener('click', (e) => {
+  const cta = e.target.closest('[data-primer-cta]');
+  if (!cta) return;
+  e.preventDefault();
+  if (window.DiseasePrimer) window.DiseasePrimer.open(cta);
 });
 document.addEventListener('change', (e) => {
   const el = e.target.closest('[data-action]');
