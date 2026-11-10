@@ -21,7 +21,7 @@
    → 外壳 client 填入原生会话草稿；不自动发送。 */
 
 const APP_INFO = {
-  version: '0.3.6',
+  version: '0.3.7',
   build: '2026-10-24',
   channel: 'dsh',
   channelLabel: '开发版 · 已连接工作台数据',
